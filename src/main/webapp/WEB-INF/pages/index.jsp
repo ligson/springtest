@@ -23,6 +23,7 @@
 				console.log(e.readyState);
 			}
 		}, false); */
+		console.log("==========iit...");
 		sse.onmessage = function(e){
 			console.log("=-----"+e);
 		};

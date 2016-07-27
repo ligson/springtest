@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEvent
 @Controller
 public class DemoController {
 
-	private List<SseEmitter> emitters = new ArrayList<>();
+	private static List<SseEmitter> emitters = new ArrayList<>();
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
@@ -40,43 +41,39 @@ public class DemoController {
 	@ResponseBody
 	@RequestMapping("/add.do")
 	public Message addData(String msg) {
-		System.out.println(request.isAsyncSupported());
-		System.out.println(request.isAsyncStarted());
 		Message message = new Message();
 		message.setMessage(msg);
 		message.setFrom(request.getRemoteHost());
-		for (SseEmitter emitter : emitters) {
-			System.out.println(emitter.hashCode() + "===invoke===");
+		Iterator<SseEmitter> iter = emitters.iterator();
+		while(iter.hasNext()){
+			SseEmitter emitter = iter.next();
+			System.out.println(emitter.hashCode() + "===准备发送消息"+message);
 			try {
 
-				emitter.send(message, MediaType.APPLICATION_JSON);
-			} catch (IOException e) {
-				emitter.complete();
-				e.printStackTrace();
+				emitter.send(message);
+				System.out.println(emitter.hashCode() + "===消息发送成功");
+			} catch (Exception e) {
+				System.out.println("给客户端发送消息失败"+emitter);
+				//emitter.complete();
+				iter.remove();
+				//emitters.remove(emitter);
+				//e.printStackTrace();
+				System.out.println(emitter.hashCode() + "===客户端移除");
 			}
-		}
 
+		}
+		System.out.println(emitters.size()+" 客户端个数");
 		return message;
 	}
 
 	@RequestMapping(path = "/pull.do", method = RequestMethod.GET)
 	public SseEmitter pull() {
 		SseEmitter emitter = new SseEmitter((long) (60 * 1000));
-		System.out.println(emitter.hashCode() + "===start");
-		emitter.onCompletion(() -> System.out.println("competion......."));
+		System.out.println(emitter.hashCode() + "启动sseEmitter");
+		emitter.onCompletion(() -> emitters.remove(emitter));
 		// emitter.onTimeout(() -> System.out.println("timeout........"));
-		try {
-			System.out.println("okkkkkkkkkk..");
-			SseEventBuilder eventBuilder = SseEmitter.event().name("message").id("1").data("receive...",
-					MediaType.TEXT_PLAIN);
-			emitter.send(eventBuilder);
-			// emitter.complete();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		emitters.addAll(emitters);
+		emitters.add(emitter);
+		System.out.println("现在客户端个数："+emitters.size());
 		return emitter;
 	}
 

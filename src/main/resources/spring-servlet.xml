@@ -22,6 +22,7 @@
 		<property name="supportedMediaTypes">
 			<list>
 				<value>text/json;charset=utf-8</value>
+				<value>application/json;charset=utf-8</value>
 				<value>text/plain;charset=UTF-8</value>
 				<value>text/event-stream;charset=UTF-8</value>
 			</list>
@@ -51,6 +52,9 @@
 	<context:annotation-config />
 
 	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<ref bean="mappingJacksonHttpMessageConverter"/>
+		</mvc:message-converters>
 		<mvc:async-support default-timeout="60000"/>
 	</mvc:annotation-driven>
 </beans>

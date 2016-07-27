@@ -6,9 +6,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>111</title>
     <script type="text/javascript">
-        var sse = new EventSource("http://localhost:8888/springtest/pull.do");
+        var sse = new EventSource("http://localhost:8888/springtest/pull2.do");
         sse.onmessage = function (e) {
-            console.log("=-----" + e.data);
+            console.log("收到消息" + e.data);
         };
         sse.onopen = function (e) {
             console.log("open connection");

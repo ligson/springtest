@@ -21,6 +21,7 @@ public class DemoController {
     private static List<SseEmitter> emitters = Collections.synchronizedList(new ArrayList<>());
     private HttpServletRequest request;
     private HttpServletResponse response;
+    private static List<Message> messages = Collections.synchronizedList(new ArrayList<>());
 
     @ModelAttribute
     public void setBase(HttpServletRequest request, HttpServletResponse response) {
@@ -53,7 +54,7 @@ public class DemoController {
                 SseEmitter emitter = iter.next();
                 System.out.println(emitter.hashCode() + "===准备发送1消息" + message);
                 try {
-                    emitter.send(message,MediaType.TEXT_PLAIN);
+                    emitter.send(message, MediaType.TEXT_PLAIN);
                     System.out.println(emitter.hashCode() + "===消息发送成功");
                 } catch (Exception e) {
                     System.out.println("给客户端发送消息失败" + emitter);
@@ -75,6 +76,7 @@ public class DemoController {
         Thread thread = new Thread(new SendThread(message));
         thread.start();
         System.out.println("............return");
+        messages.add(message);
         return message;
     }
 
@@ -87,6 +89,16 @@ public class DemoController {
         emitters.add(emitter);
         System.out.println("现在客户端个数：" + emitters.size());
         return emitter;
+    }
+
+    @RequestMapping(path = "/pull2.do", method = RequestMethod.GET)
+    public void pull2() {
+        response.setContentType("text/event-stream;charset=UTF-8");
+        try {
+            response.getWriter().print("data:\""+new Date()+"\"\n\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @RequestMapping("/json.do")

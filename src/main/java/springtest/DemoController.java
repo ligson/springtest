@@ -2,6 +2,9 @@ package springtest;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,18 +46,13 @@ public class DemoController {
 
         @Override
         public void run() {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                //e.printStackTrace();
-            }
             List<SseEmitter> waitRemoveList = new ArrayList<>();
             Iterator<SseEmitter> iter = emitters.iterator();
             while (iter.hasNext()) {
                 SseEmitter emitter = iter.next();
                 System.out.println(emitter.hashCode() + "===准备发送1消息" + message);
                 try {
-                    emitter.send(message, MediaType.TEXT_PLAIN);
+                    emitter.send(message);
                     System.out.println(emitter.hashCode() + "===消息发送成功");
                 } catch (Exception e) {
                     System.out.println("给客户端发送消息失败" + emitter);
@@ -70,6 +68,11 @@ public class DemoController {
     @ResponseBody
     @RequestMapping("/add.do")
     public Message addData(String msg) {
+        try {
+            System.out.println("add Data response:"+response.getOutputStream().hashCode());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Message message = new Message();
         message.setMessage(msg);
         message.setFrom(request.getRemoteHost());

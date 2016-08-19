@@ -26,6 +26,8 @@ public class DemoController {
     private HttpServletResponse response;
     private static List<Message> messages = Collections.synchronizedList(new ArrayList<>());
 
+    private SseEmitter sseEmitter = new SseEmitter();
+
     @ModelAttribute
     public void setBase(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
@@ -69,7 +71,7 @@ public class DemoController {
     @RequestMapping("/add.do")
     public Message addData(String msg) {
         try {
-            System.out.println("add Data response:"+response.getOutputStream().hashCode());
+            System.out.println("add Data response:" + response.getOutputStream().hashCode());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,10 +100,18 @@ public class DemoController {
     public void pull2() {
         response.setContentType("text/event-stream;charset=UTF-8");
         try {
-            response.getWriter().print("data:\""+new Date()+"\"\n\n");
+            response.getWriter().print("data:" + new Date() + "\n\n");
+            response.getWriter().close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @RequestMapping("/pull3.do")
+    public SseEmitter pull3() throws Exception {
+        sseEmitter.send("message");
+        sseEmitter.send("datga");
+        return sseEmitter;
     }
 
     @RequestMapping("/json.do")

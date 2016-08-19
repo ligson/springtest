@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>111</title>
     <script type="text/javascript">
-        var sse = new EventSource("/springtest/pull.do");
+        var sse = new EventSource("/springtest/pull3.do");
         sse.onmessage = function (e) {
             console.log("收到消息" + e.data);
         };
@@ -16,7 +16,7 @@
         sse.onerror = function (e) {
             console.log("error-" + e);
         };
-    </script>
+    </script
 </head>
 <body>
 </body>

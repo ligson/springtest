@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+    <http pattern="/login.html" security="none"/>
+    <http auto-config="true">
+        <intercept-url pattern="/user/**" access="ROLE_ADMIN,ROLE_USER"/>
+        <logout logout-url="/logout.do"
+                logout-success-url="/j_spring_security_check"/>
+    </http>
+
+    <beans:bean class="springtest.util.Md5PasswordEncoder" id="md5PasswordEncoder"/>
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userService">
+            <password-encoder ref="md5PasswordEncoder"/>
+        </authentication-provider>
+        <!--<authentication-provider ref="noPwdTokenBasedPreAuth"/>
+        <authentication-provider ref="tokenBasedPreAuth"/>-->
+    </authentication-manager>
+</beans:beans>

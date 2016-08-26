@@ -1,4 +1,4 @@
-package springtest;
+package springtest.controller;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
+import springtest.Message;
 
 @Controller
 public class DemoController {

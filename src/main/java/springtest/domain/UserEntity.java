@@ -10,6 +10,7 @@ import java.util.Collection;
 /**
  * Created by trq on 2016/8/17.
  */
+@Table(name = "u_user")
 @Entity
 public class UserEntity implements UserDetails {
     @Id

@@ -8,6 +8,10 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+    <bean id="csConfig"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:cs-config.properties"/>
+    </bean>
 
     <bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -57,4 +61,7 @@
         </mvc:message-converters>
         <mvc:async-support default-timeout="60000"/>
     </mvc:annotation-driven>
+
+    <import resource="spring-data.xml"/>
+    <import resource="spring-security.xml"/>
 </beans>

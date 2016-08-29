@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (!CollectionUtils.isEmpty(entitys)) {
             return entitys.get(0);
         } else {
-            return null;
+            throw new UsernameNotFoundException(username + " not found");
         }
     }
 }

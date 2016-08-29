@@ -61,7 +61,4 @@
         </mvc:message-converters>
         <mvc:async-support default-timeout="60000"/>
     </mvc:annotation-driven>
-
-    <import resource="spring-data.xml"/>
-    <import resource="spring-security.xml"/>
 </beans>

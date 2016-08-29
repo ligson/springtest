@@ -1,10 +1,12 @@
 package springtest.dao.impl;
 
+import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 import springtest.dao.UserDao;
 import springtest.domain.UserEntity;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -12,6 +14,12 @@ import java.util.List;
  */
 @Repository("userDao")
 public class UserDaoImpl extends HibernateTemplate implements UserDao {
+
+    @Resource
+    public void setSessionFacotry(SessionFactory sessionFacotry) {
+        super.setSessionFactory(sessionFacotry);
+    }
+
     @Override
     public List<UserEntity> list() {
         return findByExample(new UserEntity());
@@ -19,6 +27,6 @@ public class UserDaoImpl extends HibernateTemplate implements UserDao {
 
     @Override
     public List<UserEntity> findByExample(UserEntity entity) {
-        return findByExample(entity);
+        return super.findByExample(entity);
     }
 }

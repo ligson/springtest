@@ -6,9 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import springtest.dao.UserDao;
 import springtest.domain.UserEntity;
 import springtest.service.UserService;
+import springtest.util.Md5PasswordEncoder;
 
 import java.util.List;
 
@@ -20,9 +22,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private Md5PasswordEncoder md5PasswordEncoder;
+
     @Override
     public List<UserEntity> list() {
         return null;
+    }
+
+    @Override
+    public UserEntity register(String username, String password) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            return null;
+        }
+        UserEntity entity = new UserEntity();
+        entity.setUsername(username);
+        entity.setPassword(md5PasswordEncoder.encode(password));
+        userDao.save(entity);
+        return entity;
     }
 
     @Override

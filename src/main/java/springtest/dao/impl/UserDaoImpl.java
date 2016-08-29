@@ -29,4 +29,9 @@ public class UserDaoImpl extends HibernateTemplate implements UserDao {
     public List<UserEntity> findByExample(UserEntity entity) {
         return super.findByExample(entity);
     }
+
+    @Override
+    public void save(UserEntity entity) {
+        super.save(entity);
+    }
 }

@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface UserService {
     List<UserEntity> list();
+
+    UserEntity register(String username, String password);
 }

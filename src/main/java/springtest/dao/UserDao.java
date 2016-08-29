@@ -11,4 +11,6 @@ public interface UserDao {
     List<UserEntity> list();
 
     List<UserEntity> findByExample(UserEntity entity);
+
+    void save(UserEntity entity);
 }

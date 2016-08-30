@@ -11,9 +11,9 @@
     <http pattern="/add.do" security="none"/>
     <http pattern="/pull2.do" security="none"/>
     <http pattern="/json.do" security="none"/>
-
-    <http auto-config="true" entry-point-ref="unAuthorizedEntryPoint" use-expressions="true">
-        <intercept-url pattern="/login.html*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+    <http pattern="/reg.do*" security="none"/>
+    <http pattern="/reg.html*" security="none"/>
+    <http auto-config="true" entry-point-ref="unAuthorizedEntryPoint">
         <intercept-url pattern="/user/**" access="ROLE_USER"/>
         <logout logout-url="/logout.do"
                 logout-success-url="/login.html"/>
@@ -29,7 +29,7 @@
                     always-use-default-target="true"
                     authentication-success-handler-ref="authSuccessHandler"
                     authentication-failure-url="/login.html?error=true"/>
-        <custom-filter ref="tokenBasedPreAuthFilter" position="PRE_AUTH_FILTER"/>
+        <!--<custom-filter ref="tokenBasedPreAuthFilter" position="PRE_AUTH_FILTER"/>-->
     </http>
     <beans:bean id="tokenBasedPreAuthFilter" class="springtest.util.TokenBasedPreAuthFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>

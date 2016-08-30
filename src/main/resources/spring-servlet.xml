@@ -21,6 +21,8 @@
     <!-- 采用通用配置，不需要再配置每个模块的包了 -->
     <context:component-scan base-package="springtest"/>
 
+    <mvc:view-controller path="/" view-name="index"/>
+
     <!-- Configures the @Controller programming model -->
     <bean id="mappingJacksonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">

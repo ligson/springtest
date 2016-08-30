@@ -31,7 +31,9 @@
                 <prop key="hibernate.dialect">${db.dialect}</prop>
                 <prop key="hibernate.show_sql">${db.showSql}</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
+                <prop key="hibernate.transaction.coordinator_class">jdbc</prop>
+                <!--<prop key="current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>-->
+                <!--<prop key="current_session_context_class">thread</prop>-->
             </props>
         </property>
     </bean>
@@ -43,20 +45,21 @@
     </bean>
 
     <!--注解型事务扫描 -->
-    <!-- <tx:annotation-driven /> -->
-    <tx:advice id="baseServiceAdvice" transaction-manager="transactionManager">
+     <tx:annotation-driven transaction-manager="transactionManager" />
+    <!--配置型事务扫描 -->
+ <!--   <tx:advice id="baseServiceAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="find*" read-only="true" propagation="REQUIRED"/>
             <tx:method name="add*" propagation="REQUIRED"/>
             <tx:method name="update*" propagation="REQUIRED"/>
-            <tx:method name="save*" propagation="REQUIRED"/>
-            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="save*" read-only="false" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="REQUIRED" read-only="false"/>
         </tx:attributes>
     </tx:advice>
-    <aop:config>
-        <aop:pointcut expression="execution(public * springtest.dao.impl..*.*(..))"
+    <aop:config proxy-target-class="true">
+        <aop:pointcut expression="execution(public * springtest.service.impl.*.*(..))"
                       id="bussinessService"/>
         <aop:advisor advice-ref="baseServiceAdvice" pointcut-ref="bussinessService"/>
-    </aop:config>
+    </aop:config>-->
 
 </beans>

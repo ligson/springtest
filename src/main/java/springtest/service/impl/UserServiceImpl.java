@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import springtest.dao.UserDao;
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return null;
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     @Override
     public UserEntity register(String username, String password) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: trq
@@ -11,6 +12,10 @@
     <title>Title</title>
 </head>
 <body>
-
+<ul>
+    <c:forEach items="${users}" var="user">
+        <li>${user.username}--------${user.id}</li>
+    </c:forEach>
+</ul>
 </body>
 </html>

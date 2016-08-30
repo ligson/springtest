@@ -20,5 +20,7 @@
 </head>
 <body>
 <h1>welcome</h1>
+<a href="${pageContext.request.contextPath}/login.html">login</a><br/>
+<a href="${pageContext.request.contextPath}/reg.html">reg</a>
 </body>
 </html>

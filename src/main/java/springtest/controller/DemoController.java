@@ -34,8 +34,7 @@ public class DemoController {
         this.request = request;
         this.response = response;
     }
-
-    @RequestMapping("/index.do")
+    @RequestMapping("/index.html")
     public String index() {
         return "index";
     }

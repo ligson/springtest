@@ -18,7 +18,7 @@ public class UserEntity implements UserDetails {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     @GeneratedValue(generator = "uuid")
     private String id;
-    @Column
+    @Column(unique = true)
     private String username;
     @Column
     private String password;

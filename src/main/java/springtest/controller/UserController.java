@@ -45,7 +45,13 @@ public class UserController {
     public String list(HttpServletRequest request) {
         List<UserEntity> users = userService.list();
         request.setAttribute("users", users);
-        return "list";
+        return "user/list";
+    }
+
+    @RequestMapping("/user/logout.do")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/login.html";
     }
 
 }

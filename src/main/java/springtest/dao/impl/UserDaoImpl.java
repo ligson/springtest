@@ -42,7 +42,7 @@ public class UserDaoImpl implements UserDao {
             criteria.add(Restrictions.eq("id", entity.getId()));
         }
         if (entity.getUsername() != null) {
-            criteria.add(Restrictions.eq("id", entity.getUsername()));
+            criteria.add(Restrictions.eq("username", entity.getUsername()));
         }
         if (entity.getPassword() != null) {
             criteria.add(Restrictions.eq("password", entity.getPassword()));

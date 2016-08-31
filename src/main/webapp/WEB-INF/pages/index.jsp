@@ -16,6 +16,7 @@
         sse.onerror = function (e) {
             console.log("error-" + e);
         };
+        new Date("")
     </script>
 </head>
 <body>

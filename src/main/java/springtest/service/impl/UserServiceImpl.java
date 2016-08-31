@@ -1,6 +1,7 @@
 package springtest.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +13,6 @@ import org.springframework.util.StringUtils;
 import springtest.dao.UserDao;
 import springtest.domain.UserEntity;
 import springtest.service.UserService;
-import springtest.util.Md5PasswordEncoder;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public List<UserEntity> list() {
-        return null;
+        return userDao.list();
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         UserEntity entity = new UserEntity();
         entity.setUsername(username);
-        entity.setPassword(md5PasswordEncoder.encode(password));
+        entity.setPassword(md5PasswordEncoder.encodePassword(username,null));
         userDao.save(entity);
         return entity;
     }

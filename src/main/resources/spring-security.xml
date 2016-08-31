@@ -28,14 +28,16 @@
                     default-target-url="/index.do"
                     always-use-default-target="true"
                     authentication-success-handler-ref="authSuccessHandler"
-                    authentication-failure-url="/login.html?error=true"/>
+                    authentication-failure-url="/login.html?error=1"/>
         <!--<custom-filter ref="tokenBasedPreAuthFilter" position="PRE_AUTH_FILTER"/>-->
+        <session-management invalid-session-url="/login.html?error=3"/>
     </http>
     <beans:bean id="tokenBasedPreAuthFilter" class="springtest.util.TokenBasedPreAuthFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
     </beans:bean>
 
-    <beans:bean class="springtest.util.Md5PasswordEncoder" id="md5PasswordEncoder"/>
+    <beans:bean class=" org.springframework.security.authentication.encoding.Md5PasswordEncoder"
+                id="md5PasswordEncoder"/>
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="userService">
             <password-encoder ref="md5PasswordEncoder"/>

@@ -17,5 +17,7 @@
         <li>${user.username}--------${user.id}</li>
     </c:forEach>
 </ul>
+
+<a href="${pageContext.request.contextPath}/logout.do">logout</a>
 </body>
 </html>

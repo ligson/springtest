@@ -2,6 +2,7 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
@@ -13,10 +14,14 @@
     <http pattern="/json.do" security="none"/>
     <http pattern="/reg.do*" security="none"/>
     <http pattern="/reg.html*" security="none"/>
-    <http auto-config="true" entry-point-ref="unAuthorizedEntryPoint">
+    <http pattern="/login/cas*" security="none"/>
+    <http pattern="/j_spring_cas_security_check*" security="none"/>
+    <http auto-config="true" entry-point-ref="casProcessingFilterEntryPoint">
         <intercept-url pattern="/user/**" access="ROLE_USER"/>
-        <logout logout-url="/logout.do"
-                logout-success-url="/login.html"/>
+        <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter"/>
+        <logout logout-success-url="/login.html"/>
+        <!--<custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+        <custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>-->
         <!--
         default-target-url:指定了从登录页面登录后进行跳转的页面
         always-use-default-target:这个属性表示登录成功后强制跳转到default-target-url这个
@@ -24,25 +29,90 @@
         authentication-failure-handler-ref="authFailHandler"
         -->
         <!--always-use-default-target="true"-->
-        <form-login login-page="/login.html"
+        <!--<form-login login-page="/login.html"
                     default-target-url="/index.do"
                     always-use-default-target="true"
                     authentication-success-handler-ref="authSuccessHandler"
-                    authentication-failure-url="/login.html?error=1"/>
+                    authentication-failure-url="/login.html?error=1"/>-->
         <!--<custom-filter ref="tokenBasedPreAuthFilter" position="PRE_AUTH_FILTER"/>-->
-        <session-management invalid-session-url="/login.html?error=3"/>
+        <!--<session-management invalid-session-url="/login.html?error=3"/>-->
     </http>
-    <beans:bean id="tokenBasedPreAuthFilter" class="springtest.util.TokenBasedPreAuthFilter">
+
+
+    <!-- This filter handles a Single Logout Request from the CAS Server -->
+  <!--  <beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter">
+        <beans:property name="casServerUrlPrefix" value="https://localhost:8443/cas"/>
+    </beans:bean>-->
+
+    <!-- This filter redirects to the CAS Server to signal Single Logout should be performed -->
+    <!--<beans:bean id="requestSingleLogoutFilter"
+                class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <beans:constructor-arg value="https://localhost:8443/cas/logout"/>
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+        </beans:constructor-arg>
+        <beans:property name="filterProcessesUrl" value="/logout.do"/>
+    </beans:bean>-->
+
+
+   <!-- <beans:bean id="tokenBasedPreAuthFilter" class="springtest.util.TokenBasedPreAuthFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
+    </beans:bean>-->
+
+   <beans:bean class=" org.springframework.security.authentication.encoding.Md5PasswordEncoder"
+                id="md5PasswordEncoder"/>
+    <beans:bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <!-- 单点登录服务器登录URL -->
+        <beans:property name="loginUrl" value="https://localhost:8443/cas/login"/>
+        <beans:property name="serviceProperties" ref="serviceProperties"/>
     </beans:bean>
 
-    <beans:bean class=" org.springframework.security.authentication.encoding.Md5PasswordEncoder"
-                id="md5PasswordEncoder"/>
+    <beans:bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <!-- 认证失败返回的页面(非403错误)
+        <property name="authenticationFailureHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <property name="defaultFailureUrl" value="/static/html/errors/403.html"/>
+            </bean>
+        </property>-->
+        <!-- 认证成功返回的页面，此处做了修改，这个类是继续之前的操作。默认的类是设置一个固定的页面
+        <property name="authenticationSuccessHandler">
+            <bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"/>
+        </property>-->
+        <beans:property name="authenticationSuccessHandler" ref="authSuccessHandler"/>
+    </beans:bean>
+
     <authentication-manager alias="authenticationManager">
-        <authentication-provider user-service-ref="userService">
+        <!--<authentication-provider user-service-ref="userService">
             <password-encoder ref="md5PasswordEncoder"/>
-        </authentication-provider>
+        </authentication-provider>-->
+        <authentication-provider ref="casAuthenticationProvider"/>
         <!--<authentication-provider ref="noPwdTokenBasedPreAuth"/>
         <authentication-provider ref="tokenBasedPreAuth"/>-->
     </authentication-manager>
+
+    <beans:bean id="casAuthenticationProvider"
+                class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="userService"/>
+        <!--<beans:property name="authenticationUserDetailsService">
+            <beans:bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                <beans:constructor-arg ref="userService"/>
+            </beans:bean>
+        </beans:property>-->
+        <beans:property name="serviceProperties" ref="serviceProperties"/>
+        <beans:property name="ticketValidator">
+            <beans:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <beans:constructor-arg index="0" value="https://localhost:8443/cas"/>
+            </beans:bean>
+        </beans:property>
+
+        <beans:property name="key" value="an_id_for_this_auth_provider_only"/>
+    </beans:bean>
+    <beans:bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+        <!--[login/cas]是Spring Security 4.0后修改的地址、跟3.X版本完全不同、请勿修改-->
+        <!--<beans:property name="service" value="https://localhost:8443/cas/j_spring_cas_security_check"/>-->
+        <beans:property name="service" value="http://localhost:8888/springtest/login/cas"/>
+
+        <beans:property name="sendRenew" value="false"/>
+    </beans:bean>
 </beans:beans>

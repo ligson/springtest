@@ -9,5 +9,5 @@
     </bean>
     <context:component-scan base-package="springtest"/>
     <import resource="spring-data.xml"/>
-    <import resource="spring-security.xml"/>
+    <import resource="spring-cas.xml"/>
 </beans>

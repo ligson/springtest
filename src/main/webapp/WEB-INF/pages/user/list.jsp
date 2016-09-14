@@ -18,6 +18,7 @@
     </c:forEach>
 </ul>
 
-<a href="${pageContext.request.contextPath}/logout.do">logout</a>
+<a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
+
 </body>
 </html>

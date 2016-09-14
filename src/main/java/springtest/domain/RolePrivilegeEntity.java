@@ -14,9 +14,11 @@ public class RolePrivilegeEntity {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     @GeneratedValue(generator = "uuid")
     private String id;
-    @Column
+
+    @ManyToOne(targetEntity = RoleEntity.class)
     private RoleEntity role;
-    @Column
+
+    @ManyToOne(targetEntity = PrivilegeEntity.class)
     private PrivilegeEntity privilege;
 
     public String getId() {
